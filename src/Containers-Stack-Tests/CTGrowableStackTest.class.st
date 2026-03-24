@@ -15,6 +15,50 @@ CTGrowableStackTest >> setUp [
 ]
 
 { #category : 'tests' }
+CTGrowableStackTest >> testExplicitCapacityDoubling [
+	
+	| internalCollection |
+	
+	stack := CTGrowableStack new.
+	internalCollection := OrderedCollection new: 4.
+	stack instVarNamed: 'elements' put: internalCollection.
+
+	1 to: 4 do: [ :i | stack push: i ].
+	self assert: internalCollection capacity equals: 4.
+
+	stack push: 5.
+
+	self assert: (stack instVarNamed: 'elements') capacity equals: 8.
+	self assert: stack size equals: 5.
+]
+
+{ #category : 'tests' }
+CTGrowableStackTest >> testInternalCapacityDoubling [
+	
+	| internalCollection |
+	
+	internalCollection := stack instVarNamed: 'elements'.
+	
+	1 to: 100 do: [ :i | stack push: i ].
+
+	self assert: stack size equals: 100.
+	self assert: internalCollection capacity >= 100.
+]
+
+{ #category : 'tests' }
+CTGrowableStackTest >> testInternalGrowth [
+
+	| initialCapacity |
+	
+	initialCapacity := stack size. 
+	
+	1 to: 20 do: [ :i | stack push: i ].
+	
+	self assert: stack size equals: 20.
+	self assert: stack top equals: 20.
+]
+
+{ #category : 'tests' }
 CTGrowableStackTest >> testIsEmpty [
 	self assert: stack isEmpty.
 	

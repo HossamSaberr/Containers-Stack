@@ -45,6 +45,36 @@ CTTrackedGrowableStackTest >> testMaxDepthAfterPop [
 ]
 
 { #category : 'tests' }
+CTTrackedGrowableStackTest >> testMaxDepthDuringInternalGrowth [
+	
+	1 to: 50 do: [ :i | stack push: i ].
+	self assert: stack maxDepth equals: 50.
+	self assert: stack size equals: 50.
+	
+	1 to: 25 do: [ :i | stack pop ].
+	self assert: stack maxDepth equals: 50.
+	self assert: stack size equals: 25.
+]
+
+{ #category : 'tests' }
+CTTrackedGrowableStackTest >> testMaxDepthWithExplicitInternalGrowth [
+
+	| internalCollection |
+	stack := CTTrackedGrowableStack new.
+	internalCollection := OrderedCollection new: 4.
+	stack instVarNamed: 'elements' put: internalCollection.
+
+	1 to: 4 do: [ :i | stack push: i ].
+	self assert: stack maxDepth equals: 4.
+	self assert: internalCollection capacity equals: 4.
+
+	stack push: 5.
+
+	self assert: stack maxDepth equals: 5.
+	self assert: (stack instVarNamed: 'elements') capacity equals: 8.
+]
+
+{ #category : 'tests' }
 CTTrackedGrowableStackTest >> testMaxDepthWithFluctuations [
 	stack push: 1.
 	stack push: 2.
